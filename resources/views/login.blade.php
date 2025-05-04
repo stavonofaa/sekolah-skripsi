@@ -5,18 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<<<<<<< HEAD
-    {{-- logo company --}}
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('bahan/logo.png') }}">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-=======
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
->>>>>>> 4db143587ac2b0b494065726bc2cb10c90ccf402
     <style>
         .logo {
             display: block;
@@ -50,7 +42,6 @@
                     <div class="school-name">SMAN 1 CIKARANG TIMUR</div>
                     <div class="school-subtitle">Sistem Absensi Berbasis Lokasi</div>
                     <h4 class="text-center mb-4 mt-4">Login</h4>
-<<<<<<< HEAD
 
                     <form action="/login" method="post">
                         @csrf
@@ -68,16 +59,6 @@
 
                         <button type="submit" class="btn btn-dark mt-3 w-100">Login</button>
                     </form>
-=======
-                    <form action="/login" method="post">
-                        @csrf
-                        <label for="username">Username</label>
-                        <input type="text" name="username" id="username" class="form-control" required autocomplete="off">
-                        <label for="Password" class="mt-2">Password</label>
-                        <input type="password" name="password" id="Password" class="form-control" required>
-                        <button type="submit" class="btn btn-dark mt-3 w-100">Login</button>
-                    </form> 
->>>>>>> 4db143587ac2b0b494065726bc2cb10c90ccf402
                 </div>
             </div>
         </div>

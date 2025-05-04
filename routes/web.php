@@ -12,17 +12,10 @@ use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\UserAccess;
 use Illuminate\Support\Facades\Route;
 
-<<<<<<< HEAD
 Route::get('/', function () {
     return redirect()->route('login');
 });
 Route::get('/login', [AuthController::class, 'index'])->middleware(RedirectIfAuthenticated::class)->name('login');
-=======
-
-
-
-Route::get('/', [AuthController::class, 'index'])->middleware(RedirectIfAuthenticated::class)->name('login');
->>>>>>> 4db143587ac2b0b494065726bc2cb10c90ccf402
 Route::post('/login', [AuthController::class, 'login'])->middleware(RedirectIfAuthenticated::class);
 Route::get('/logout', [AuthController::class, 'logout']);
 
@@ -39,12 +32,9 @@ Route::middleware(['auth', UserAccess::class . ':user'])->group(function () {
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
     Route::post('/absen', [UserController::class, 'store'])->name('user.store');
 });
-<<<<<<< HEAD
 
 // Route untuk redirect ke provider OAuth
 Route::get('auth/{provider}', [App\Http\Controllers\AuthController::class, 'redirectToProvider']);
 
 // Route untuk callback dari provider OAuth
 Route::get('auth/{provider}/callback', [App\Http\Controllers\AuthController::class, 'handleProviderCallback']);
-=======
->>>>>>> 4db143587ac2b0b494065726bc2cb10c90ccf402
