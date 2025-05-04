@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
+=======
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+>>>>>>> 4db143587ac2b0b494065726bc2cb10c90ccf402
 
 class AuthController extends Controller
 {
@@ -16,6 +21,7 @@ class AuthController extends Controller
         return view('login');
     }
 
+<<<<<<< HEAD
     public function redirectToProvider($provider)
     {
         return Socialite::driver($provider)->redirect();
@@ -53,6 +59,8 @@ class AuthController extends Controller
         }
     }
 
+=======
+>>>>>>> 4db143587ac2b0b494065726bc2cb10c90ccf402
     public function login(Request $request)
     {
         $credentials = $request->only(['username', 'password']);

@@ -56,5 +56,90 @@ class DatabaseSeeder extends Seeder
             'radius' => '100',
             'is_active' => '1',
         ]);
+<<<<<<< HEAD
+=======
+        // $this->call(AttendanceSeeder::class);
+        // Attendance::create([
+        //     'user_id' => 2,
+        //     'location_id' => 1,
+        //     'check_in_time' => now(),
+        //     'check_out_time' => now(),
+        //     'check_in_lat' => -6.9274995,
+        //     'check_in_long' => 106.9294141,
+        //     'check_out_lat' => -6.907540793295039,
+        //     'check_out_long' => 106.89547192213001,
+        // ]);
+        // -6.907540793295039, 106.89547192213001
+        // Attendance::create([
+        //     'user_id' => 2,
+        //     'location_id' => 1,
+        //     'check_in_time' => now(),
+        //     'check_out_time' => now(),
+        //     'check_in_lat' => -6.9274995,
+        //     'check_in_long' => 106.9294141,
+        //     'check_out_lat' => -6.907540793295039,
+        //     'check_out_long' => 106.89547192213001,
+        // ]);
+        // Attendance::create([
+        //     'user_id' => 2,
+        //     'location_id' => 1,
+        //     'check_in_time' => now(),
+        //     'check_out_time' => now(),
+        //     'check_in_lat' => -6.9274995,
+        //     'check_in_long' => 106.9294141,
+        //     'check_out_lat' => -6.907540793295039,
+        //     'check_out_long' => 106.89547192213001,
+        // ]);
+        // Attendance::create([
+        //     'user_id' => 2,
+        //     'location_id' => 1,
+        //     'check_in_time' => now(),
+        //     'check_out_time' => now(),
+        //     'check_in_lat' => -6.9274995,
+        //     'check_in_long' => 106.9294141,
+        //     'check_out_lat' => -6.907540793295039,
+        //     'check_out_long' => 106.89547192213001,
+        // ]);
+        // Attendance::create([
+        //     'user_id' => 2,
+        //     'location_id' => 1,
+        //     'check_in_time' => now(),
+        //     'check_out_time' => now(),
+        //     'check_in_lat' => -6.9274995,
+        //     'check_in_long' => 106.9294141,
+        //     'check_out_lat' => -6.907540793295039,
+        //     'check_out_long' => 106.89547192213001,
+        // ]);
+        // Attendance::create([
+        //     'user_id' => 2,
+        //     'location_id' => 1,
+        //     'check_in_time' => now(),
+        //     'check_out_time' => now(),
+        //     'check_in_lat' => -6.9274995,
+        //     'check_in_long' => 106.9294141,
+        //     'check_out_lat' => -6.907540793295039,
+        //     'check_out_long' => 106.89547192213001,
+        // ]);
+        // Attendance::create([
+        //     'user_id' => 3,
+        //     'location_id' => 1,
+        //     'check_in_time' => now(),
+        //     'check_out_time' => now(),
+        //     'check_in_lat' => -6.9274995,
+        //     'check_in_long' => 106.9294141,
+        //     'check_out_lat' => -6.907540793295039,
+        //     'check_out_long' => 106.89547192213001,
+        // ]);
+        // Attendance::create([
+        //     'user_id' => 4,
+        //     'location_id' => 1,
+        //     'check_in_time' => now(),
+        //     'check_out_time' => now(),
+        //     'check_in_lat' => -6.9274995,
+        //     'check_in_long' => 106.9294141,
+        //     'check_out_lat' => -6.907540793295039,
+        //     'check_out_long' => 106.89547192213001,
+        // ]);
+>>>>>>> 4db143587ac2b0b494065726bc2cb10c90ccf402
     }
 }

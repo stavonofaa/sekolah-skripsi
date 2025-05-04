@@ -7,7 +7,10 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^11.9",
+<<<<<<< HEAD
         "laravel/socialite": "^5.20",
+=======
+>>>>>>> 4db143587ac2b0b494065726bc2cb10c90ccf402
         "laravel/tinker": "^2.9",
         "maatwebsite/excel": "^3.1"
     },
