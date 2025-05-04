@@ -7,11 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Absensi</title>
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/dashboard/">
-<<<<<<< HEAD
     {{-- logo company --}}
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('bahan/logo.png') }}">
-=======
->>>>>>> 4db143587ac2b0b494065726bc2cb10c90ccf402
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
     <link href="{{ asset('bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <style>

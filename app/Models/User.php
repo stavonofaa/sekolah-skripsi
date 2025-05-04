@@ -19,7 +19,6 @@ class User extends Authenticatable
      */
     protected $guarded = ['id'];
 
-<<<<<<< HEAD
     protected $fillable = [
         'name',
         'email',
@@ -28,9 +27,6 @@ class User extends Authenticatable
         'provider_id',
         'role',
     ];
-
-=======
->>>>>>> 4db143587ac2b0b494065726bc2cb10c90ccf402
 
     /**
      * The attributes that should be hidden for serialization.

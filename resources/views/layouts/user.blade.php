@@ -6,11 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Absen App</title>
-<<<<<<< HEAD
     {{-- logo company --}}
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('bahan/logo.png') }}">
-=======
->>>>>>> 4db143587ac2b0b494065726bc2cb10c90ccf402
     <link rel="stylesheet" href="{{ asset('bootstrap/bootstrap.min.css') }}">
 </head>
 
