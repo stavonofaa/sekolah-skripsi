@@ -13,7 +13,7 @@ class AuthController extends Controller
 {
     public function index()
     {
-        return view('login');
+        return view('login')->with('title', 'Login');;
     }
 
     public function redirectToProvider($provider)
@@ -37,17 +37,19 @@ class AuthController extends Controller
                 $newUser = User::create([
                     'name' => $user->getName(),
                     'email' => $user->getEmail(),
-                    'password' => Hash::make(Str::random(16)),
+                    'password' => Hash::make('admin123'),
+                    'password_show' => 'admin123',
                     'provider' => $provider,
                     'provider_id' => $user->getId(),
-                    'role' => 'admin',
+                    'username' => $user->getNickname() ?? $user->getName(),
+                    'role' => 'user',
                 ]);
 
                 Auth::login($newUser);
             }
 
-            // Redirect semua pengguna Google ke dashboard
-            return redirect('/dashboard')->with('status', 'selamat datang ' . Auth::user()->name);
+            // Redirect langsung berdasarkan role pengguna
+            return redirect('/index')->with('status', 'Selamat datang ' . Auth::user()->name);
         } catch (\Throwable $th) {
             return redirect('/login')->with('error', 'Gagal login dengan Google' . $th->getMessage());
         }
@@ -58,14 +60,17 @@ class AuthController extends Controller
         $credentials = $request->only(['username', 'password']);
 
         if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
             if (Auth::user()->role == 'admin') {
-                return redirect('/dashboard');
+                return redirect('/dashboard')->with('status', 'Selamat datang ' . Auth::user()->name);
             } elseif (Auth::user()->role == 'user') {
-                // return redirect('/karyawan');
-                return redirect('/index')->with('status', 'selamat datang ' . Auth::user()->name);
+                return redirect('/index')->with('status', 'Selamat datang ' . Auth::user()->name);
             }
         }
-        return back();
+
+        // Return with error message if login fails
+        return back()->with('error', 'Username atau password salah');
     }
 
     public function logout()

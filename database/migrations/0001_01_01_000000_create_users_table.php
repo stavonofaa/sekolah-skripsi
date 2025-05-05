@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('password');
             $table->string('password_show')->nullable();
+            $table->string('email')->unique();
             $table->string('provider')->nullable();
             $table->string('provider_id')->nullable();
             $table->enum('role', ['admin', 'user'])->default('user');
-            $table->string('jabatan')->nullable();
             $table->timestamps();
         });
 

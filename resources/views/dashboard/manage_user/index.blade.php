@@ -99,7 +99,8 @@
                     </ol>
                     <ul>
                         <li>Contoh :
-                        <img src="{{ asset('bahan/Screenshot 2024-11-06 175030.jpg') }}" alt=""></li>
+                            <img src="{{ asset('bahan/Screenshot 2024-11-06 175030.jpg') }}" alt="">
+                        </li>
                     </ul>
                     </p>
                 </div>

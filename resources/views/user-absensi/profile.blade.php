@@ -37,8 +37,8 @@
             <hr>
             <div class="row mb-3">
                 <div class="col-10">
-                    <label for="" class="text-muted fw-bold text-sm">Jabatan</label>
-                    <h5 class=" my-3">{{ Auth::user()->jabatan }}</h5>
+                    <label for="" class="text-muted fw-bold text-sm">Role</label>
+                    <h5 class=" my-3">{{ Auth::user()->role }}</h5>
                 </div>
             </div>
             <hr>

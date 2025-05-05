@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('bahan/logo.png') }}">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+@section('styles')
     <style>
         .logo {
             display: block;
@@ -30,10 +22,9 @@
             color: #555;
         }
     </style>
-    <title>Login - SMAN 1 Cikarang Timur</title>
-</head>
+@endsection
 
-<body>
+@section('content')
     <div class="container d-flex justify-content-center align-items-center mt-5">
         <div class="col-md-4 col-12 mt-5">
             <div class="card mt-5">
@@ -43,26 +34,97 @@
                     <div class="school-subtitle">Sistem Absensi Berbasis Lokasi</div>
                     <h4 class="text-center mb-4 mt-4">Login</h4>
 
-                    <form action="/login" method="post">
+                    <form class="needs-validation" action="/login" method="post" novalidate>
                         @csrf
                         <!-- Google Sign In -->
-                        <a href="{{ url('auth/google') }}" class="btn btn-outline-danger w-100 mb-3">
-                            <i class="bi bi-google"></i> Login dengan akun Google Anda
+                        <a href="{{ url('auth/google') }}"
+                            class="btn btn-light w-100 mb-3 d-flex align-items-center justify-content-center gap-2">
+                            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo"
+                                width="20" height="20">
+                            Login Akun Google Anda
                         </a>
 
-                        <label for="username">Username</label>
-                        <input type="text" name="username" id="username" class="form-control" required
-                            autocomplete="off">
+                        <div id="userName">
+                            <label for="username">Username</label>
+                            <input type="text" name="username" id="username" class="form-control" required
+                                autocomplete="off">
+                            <div class="invalid-feedback">
+                                Username wajib diisi
+                            </div>
+                        </div>
 
-                        <label for="Password" class="mt-2">Password</label>
-                        <input type="password" name="password" id="Password" class="form-control" required>
+                        <div class="passWord">
+                            <label for="Password" class="mt-2">Password</label>
+                            <input type="password" name="password" id="Password" class="form-control" required>
+                            <div class="invalid-feedback">
+                                Password wajib diisi
+                            </div>
+                        </div>
 
                         <button type="submit" class="btn btn-dark mt-3 w-100">Login</button>
                     </form>
+
+                    <div class="text-center mt-3">
+                        <span>Belum punya akun?</span>
+                        <a href="{{ route('register') }}">Daftar sekarang</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</body>
+@endsection
 
-</html>
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Periksa flash messages
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login gagal',
+                    text: '{{ session('error') }}',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            @endif
+
+            @if (session('status'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "{{ session('status') }}",
+                    toast: true,
+                    showConfirmButton: false,
+                    timer: 1500,
+                    customClass: {
+                        popup: 'mt-6'
+                    }
+                });
+            @endif
+
+            // Form validation
+            const formLogin = document.querySelector('.needs-validation');
+
+            if (formLogin) {
+                formLogin.addEventListener('submit', function(e) {
+                    if (!formLogin.checkValidity()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    } else {
+                        // Show loading
+                        Swal.fire({
+                            title: 'Memproses...',
+                            html: 'Mohon tunggu sebentar',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                    }
+
+                    formLogin.classList.add('was-validated');
+                });
+            }
+        });
+    </script>
+@endsection

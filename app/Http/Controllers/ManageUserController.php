@@ -17,6 +17,12 @@ class ManageUserController extends Controller
         return view('dashboard.manage_user.index', compact('users'));
     }
 
+    public function siswa()
+    {
+        $users_siswa = User::where('role', 'user')->get();
+        return view('dashboard.manage_siswa.siswa', compact('users_siswa'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */

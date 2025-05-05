@@ -67,6 +67,8 @@ return [
 
     'timezone' => env('APP_TIMEZONE', 'UTC'),
 
+    'namespace' => 'App',
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

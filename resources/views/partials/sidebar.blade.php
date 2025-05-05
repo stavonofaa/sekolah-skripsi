@@ -26,6 +26,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2 text-dark" href="{{ route('siswa.index') }}">
+                        <svg class="bi">
+                            <use xlink:href="#person-fill" />
+                        </svg>
+                        Data Siswa
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link d-flex align-items-center gap-2 text-dark"
                         href="{{ route('manage-location.index') }}">
                         <svg class="bi">
