@@ -50,18 +50,6 @@
                         @enderror
                     </div>
                 </div>
-
-                <div class="row mt-2">
-                    <div class="col-md-3">
-                        <label for="jabatan" class="form-label">Jabatan</label>
-                        <input type="text" class="form-control" name="jabatan"
-                            value="{{ old('jabatan', $user->jabatan) }}">
-                        @error('jabatan')
-                            <div class="alert alert-danger mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
                 <button type="submit" class="btn btn-primary mt-3">Perbarui Pengguna</button>
             </form>
         </div>

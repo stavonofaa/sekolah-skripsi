@@ -92,6 +92,7 @@
                         lat: position.coords.latitude,
                         lng: position.coords.longitude,
                     };
+                    console.log("Lokasi pengguna:", pos.lat, pos.lng);
                     map.setCenter(pos);
 
                     // Tambahkan marker

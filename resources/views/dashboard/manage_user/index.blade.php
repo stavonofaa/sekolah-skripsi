@@ -29,7 +29,7 @@
                 <tr>
                     <th>Nama</th>
                     <th>Posisi</th>
-                    <th></th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,7 +39,7 @@
                             <h6>{{ $item->name }}</h6>
                         </td>
                         <td>
-                            <h6>{{ $item->jabatan }}</h6>
+                            <h6>{{ $item->role }}</h6>
                         </td>
                         <td>
                             <a href="{{ route('manage-user.edit', $item->id) }}" class="btn btn-outline-warning"
