@@ -48,6 +48,7 @@ class DatabaseSeeder extends Seeder
         //     'jabatan' => 'karyawan',
         // ]);
 
+        // Hanya aktifkan satu lokasi
         Location::create([
             'name_location' => 'barokah tour & travel',
             'address' => 'jalan raya cisaat',
@@ -63,7 +64,7 @@ class DatabaseSeeder extends Seeder
             'latitude' => '-6.2207564',
             'longitude' => '106.9870886',
             'radius' => '1000',
-            'is_active' => '1',
+            'is_active' => '0',
         ]);
     }
 }
