@@ -29,8 +29,7 @@
     @yield('content2')
 
     <script src="{{ asset('bootstrap/bootstrap.bundle.min.js') }}"></script>
-
-    {{-- <script src="{{ asset('bahan/geo.js') }}"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

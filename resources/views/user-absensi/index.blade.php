@@ -5,7 +5,7 @@
         <div class="row my-3">
             <div class="col-10">
                 <h3 class="text-white">{{ Auth::user()->name }}</h3>
-                <span class="text-white">{{ Auth::user()->jabatan }}</span>
+                <span class="text-white">{{ Auth::user()->role }}</span>
             </div>
             <div class="col-2 d-flex justify-content-end">
                 <div class="dropdown">
@@ -72,6 +72,8 @@
     <script src="https://maps.googleapis.com/maps/api/js?key={{ env('api') }}"></script>
     <script>
         let map, marker;
+        let schoolLocation = null;
+        let maxRadius = 100;
 
         function initMap() {
             // Inisialisasi peta
@@ -97,37 +99,124 @@
                         position: pos,
                         map: map,
                         draggable: true, // Marker dapat digeser
+                        title: "Lokasi Anda",
+                        icon: {
+                            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                        }
                     });
 
                     // Set input latitude dan longitude
                     document.getElementById('check_in_latitude').value = pos.lat;
                     document.getElementById('check_in_longitude').value = pos.lng;
+                    document.getElementById('check_out_latitude').value = pos.lat;
+                    document.getElementById('check_out_longitude').value = pos.lng;
 
                     // Update lokasi saat marker digeser
                     marker.addListener('dragend', function() {
                         const newPos = marker.getPosition();
                         document.getElementById('check_in_latitude').value = newPos.lat();
                         document.getElementById('check_in_longitude').value = newPos.lng();
+                        document.getElementById('check_out_latitude').value = newPos.lat();
+                        document.getElementById('check_out_longitude').value = newPos.lng();
+
+                        // Update informasi jarak
+                        if (schoolLocation) {
+                            updateDistanceInfo(newPos.lat(), newPos.lng(), schoolLocation.lat,
+                                schoolLocation.lng);
+                        }
+
+                        // Jika lokasinya tersedia, gambarkan penanda dan radius sekolah
+                        if (schoolLocation) {
+                            drawSchoolMarkerAndRadius(schoolLocation);
+                            updateDistanceInfo(pos.lat, pos.lng, schoolLocation.lat, schoolLocation.lng)
+                        }
                     });
                 }, function() {
-                    alert("Lokasi tidak dapat ditemukan.");
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Lokasi tidak dapat ditemukan',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 });
             } else {
-                alert("Browser tidak mendukung geolokasi.");
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Browser tidak mendukung geolokasi',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
         }
 
         // Jalankan peta
         window.onload = initMap;
 
-        // Event listener untuk absen keluar
-        document.getElementById('check_out_form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const pos = marker.getPosition();
-            document.getElementById('check_out_latitude').value = pos.lat();
-            document.getElementById('check_out_longitude').value = pos.lng();
-            event.target.submit();
-        });
+        // event listener untuk absen Masuk
+        document.getElementById('check_in_form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitForm(this);
+        })
+
+        // event listener untuk absen Keluar
+        document.getElementById('check_out_form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitForm(this);
+        })
+
+        function submitForm(form) {
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-with': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // berhasil absen
+                        let title = 'Berhasil';
+                        let icon = 'success';
+                        let html = data.message;
+
+                        if (data.warning) {
+                            icon = 'warning';
+                            html += '<br><span class="text-warning">' + data.warning + '</span>';
+                        }
+
+                        Swal.fire({
+                            title: title,
+                            html: html,
+                            icon: icon,
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else if (data.status === 'error') {
+                        // Gagal absen (diluar radius atau sudah absen)
+                        Swal.fire({
+                            title: 'Gagal',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Terjadi kesalahan sistem. Silakan coba lagi',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        }
     </script>
 @endsection
 

@@ -30,12 +30,12 @@ class Attendance extends Model
         $lat1 = $this->check_in_lat;
         $lon1 = $this->check_in_long;
 
-        // Koordinat lokasi kantor
+        // Koordinat lokasi sekolah
         $lat2 = $location->latitude;
         $lon2 = $location->longitude;
 
         // Rumus Haversine
-        $earthRadius = 6371; // Radius bumi dalam kilometer
+        $earthRadius = 6371000; // Radius bumi dalam meter (diperbarui menjadi meter)
         $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);
 
@@ -46,8 +46,9 @@ class Attendance extends Model
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
         $distance = $earthRadius * $c;
 
-        return round($distance, 2); // Jarak dalam kilometer (dibulatkan 2 desimal)
+        return round($distance, 2); // Jarak dalam meter (dibulatkan 2 desimal)
     }
+
     public function calculateCheckOutDistance()
     {
         $location = Location::find($this->location_id);
