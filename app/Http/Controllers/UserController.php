@@ -50,7 +50,9 @@ class UserController extends Controller
         $currentTime = now();
 
         // Dapatkan lokasi aktif
-        $location = Location::where('is_active', true)->first();
+        $location = Location::where('name_location', 'barokah tour & travel')
+            ->where('is_active', true)
+            ->first();
         if (!$location) {
             return response()->json([
                 'status' => 'error',
@@ -66,8 +68,8 @@ class UserController extends Controller
             $location->longitude
         );
 
-        // Validasi radius maksimum
-        $maxRadius = $location->radius ?? 100; //default 100 m
+        $maxRadius = $location->radius ?? 100;
+
         if ($distance > $maxRadius) {
             return response()->json([
                 'status' => 'error',
@@ -81,8 +83,8 @@ class UserController extends Controller
             ->first();
 
         // Jam kerja
-        $startTime = Carbon::parse('07.00');
-        $endTime = Carbon::parse('16.00');
+        $startTime = Carbon::parse('07:00');
+        $endTime = Carbon::parse('16:00');
 
         // Absen masuk
         if ($request->type == 'check_in') {
@@ -172,7 +174,7 @@ class UserController extends Controller
 
     private function calculateDistance($lat1, $lon1, $lat2, $lon2)
     {
-        $earthRadius = 6371000; // meter
+        $earthRadius = 6371000; // radius bumi dalam meter
 
         $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);

@@ -54,8 +54,8 @@ class DatabaseSeeder extends Seeder
             'address' => 'jalan raya cisaat',
             'latitude' => '-6.909357607107361',
             'longitude' => '106.89405757822857',
-            'radius' => '100',
-            'is_active' => '1',
+            'radius' => 100.0,
+            'is_active' => 1,
         ]);
 
         Location::create([
@@ -63,8 +63,8 @@ class DatabaseSeeder extends Seeder
             'address' => 'Jl. Macan E, Harapan Jaya, Bekasi Utara, Kota Bekasi, Jawa Barat 17124',
             'latitude' => '-6.2207564',
             'longitude' => '106.9870886',
-            'radius' => '1000',
-            'is_active' => '0',
+            'radius' => 1000.0,
+            'is_active' => 0,
         ]);
     }
 }
