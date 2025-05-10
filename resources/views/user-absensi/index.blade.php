@@ -79,8 +79,8 @@
             // Inisialisasi peta
             map = new google.maps.Map(document.getElementById("map"), {
                 center: {
-                    lat: -6.200000,
-                    lng: 106.816666
+                    lat: -6.274270873184602,
+                    lng: 107.2014928958949
                 }, // Lokasi default (Jakarta)
                 zoom: 15,
             });
