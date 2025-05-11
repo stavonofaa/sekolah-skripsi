@@ -9,31 +9,64 @@
                 <h4 class="text-light my-3">Absensi</h4>
             </div>
         </div>
-    </div>
-@endsection
-@section('content2')
-    <div class="container mt-3">
-        <table class="table table-responsive table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Tanggal</th>
-                    <th>Jam Masuk</th>
-                    <th>Jam Pulang</th>
-                    <th>Jarak Absen</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($attendances as $item)
+
+        {{-- Absen lokasi --}}
+        <div class="container mt-3">
+            <h4 class="text-light my-3">Lokasi</h4>
+            <table class="table table-responsive table-bordered table-striped">
+                <thead>
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->created_at->format('j F Y') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($item->check_in_time)->format('H:i') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($item->check_out_time)->format('H:i') }}</td>
-                        <td>{{ $item->distance }}</td>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Jam Masuk</th>
+                        <th>Jam Pulang</th>
+                        <th>Jarak Absen</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($attendances as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->created_at->format('j F Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->check_in_time)->format('H:i') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->check_out_time)->format('H:i') }}</td>
+                            <td>{{ $item->distance }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        {{-- Absen camera --}}
+        <div class="container mt-3">
+            <h4 class="text-light my-3">Kamera</h4>
+            <table class="table table-responsive table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Foto</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($cameraAttendances as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>
+                                @if ($item->photo_path)
+                                    <img class="w-100" src="{{ asset('storage/attendance_photos/' . $item->photo_path) }}"
+                                        alt="Foto Absen">
+                                @else
+                                    Tidak ada foto
+                                @endif
+                            </td>
+                            <td>{{ $item->latitude }}</td>
+                            <td>{{ $item->longitude }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 @endsection

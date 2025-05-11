@@ -24,39 +24,58 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-6">
-                        <h5 class="fw-bold">Absensi App</h5>
+                        <ul class="nav nav-tabs" id="absensiTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="map-tab" data-bs-toggle="tab" href="#map-absensi"
+                                    role="tab" aria-controls="map-absensi" aria-selected="true">Lokasi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-black" id="camera-tab" data-bs-toggle="tab" href="#camera-absensi"
+                                    role="tab" aria-controls="camera-absensi" aria-selected="false">Camera</a>
+                            </li>
+                        </ul>
                     </div>
                     <div class="col-6 d-flex justify-content-end">
                         <span class="mt-1 text-muted">{{ date('j F Y') }}</span>
                     </div>
                 </div>
 
-                <div id="map" style="width: 100%; height: 400px;" class="mt-3"></div>
+                <div class="tab-content mt-3" id="absensiTabContent">
+                    <!-- TAB LOKASI -->
+                    <div class="tab-pane fade show active" id="map-absensi" role="tabpanel" aria-labelledby="map-tab">
+                        <div id="map" style="width: 100%; height: 400px;" class="mt-3"></div>
 
-                {{-- Form Absen Masuk dan Pulang --}}
-                <div class="row mt-3">
-                    <div class="col-6">
-                        <form id="check_in_form" action="{{ route('user.store') }}" method="post">
-                            @csrf
-                            <input type="hidden" name="latitude" id="check_in_latitude">
-                            <input type="hidden" name="longitude" id="check_in_longitude">
-                            <input type="hidden" name="type" value="check_in">
-                            <button type="submit" class="btn btn-dark w-100 rounded-5">Absen Masuk</button>
-                        </form>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <form id="check_in_form" action="{{ route('user.store') }}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="latitude" id="check_in_latitude">
+                                    <input type="hidden" name="longitude" id="check_in_longitude">
+                                    <input type="hidden" name="type" value="check_in">
+                                    <button type="submit" class="btn btn-dark w-100 rounded-5">Absen Masuk</button>
+                                </form>
+                            </div>
+                            <div class="col-6">
+                                <form id="check_out_form" action="{{ route('user.store') }}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="latitude" id="check_out_latitude">
+                                    <input type="hidden" name="longitude" id="check_out_longitude">
+                                    <input type="hidden" name="type" value="check_out">
+                                    <button type="submit" class="btn btn-dark w-100 rounded-5">Absen Pulang</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <form id="check_out_form" action="{{ route('user.store') }}" method="post">
-                            @csrf
-                            <input type="hidden" name="latitude" id="check_out_latitude">
-                            <input type="hidden" name="longitude" id="check_out_longitude">
-                            <input type="hidden" name="type" value="check_out">
-                            <button type="submit" class="btn btn-dark w-100 rounded-5">Absen Pulang</button>
-                        </form>
+
+                    <!-- TAB CAMERA -->
+                    <div class="tab-pane fade" id="camera-absensi" role="tabpanel" aria-labelledby="camera-tab">
+                        @include('user-absensi.absenCamera')
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Riwayat -->
         <div class="mt-3">
             <div class="row">
                 <div class="col-6">

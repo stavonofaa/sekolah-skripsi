@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Location;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use App\Models\CameraAttedance;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -24,14 +25,20 @@ class UserController extends Controller
             ->latest()
             ->get();
 
+        $cameraAttendances = CameraAttedance::select('id', 'photo_path', 'latitude', 'longitude', 'created_at')
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
+
         // Menghitung jarak untuk setiap absensi
         foreach ($attendances as $attendance) {
             $attendance->distance = $attendance->calculateDistance();
         }
 
         // Mengirim data ke view
-        return view('user-absensi.riwayatAbsen', compact('attendances'));
+        return view('user-absensi.riwayatAbsen', compact('attendances', 'cameraAttendances'));
     }
+
     public function profile()
     {
         return view('user-absensi.profile');
@@ -187,5 +194,27 @@ class UserController extends Controller
         $distance = $earthRadius * $c;
 
         return round($distance);
+    }
+
+    public function cameraAbsensi(Request $request)
+    {
+        $request->validate([
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
+        $photo = $request->file('photo');
+        $photoPath = $photo->store('attendance_photos', 'public');
+
+        CameraAttedance::create([
+            'user_id' => Auth::id(),
+            'check_in' => now(),
+            'photo_path' => $photoPath,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude
+        ]);
+
+        return redirect()->back()->with('success', 'Absensi berhasil direkam');
     }
 }

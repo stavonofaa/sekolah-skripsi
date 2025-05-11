@@ -11,6 +11,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ManageUserController;
 use App\Http\Controllers\ImportExcelController;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Controllers\CameraAttedanceController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -43,3 +44,6 @@ Route::get('auth/{provider}', [App\Http\Controllers\AuthController::class, 'redi
 
 // Route untuk callback dari provider OAuth
 Route::get('auth/{provider}/callback', [App\Http\Controllers\AuthController::class, 'handleProviderCallback']);
+
+// camera
+Route::post('/absensi-camera', [UserController::class, 'cameraAbsensi'])->name('user.cameraAbsensi');
