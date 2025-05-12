@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Models\Location;
 use App\Models\Attendance;
@@ -46,154 +47,126 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
-            'type' => 'required|in:check_in,check_out'
-        ]);
-
-        $user_id = Auth::id();
-        $today = now()->toDateString();
-        $currentTime = now();
-
-        // Dapatkan lokasi aktif
-        $location = Location::where('name_location', 'barokah tour & travel')
-            ->where('is_active', true)
-            ->first();
-        if (!$location) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Tidak ada lokasi instansi yang aktif'
+        try {
+            $request->validate([
+                'latitude' => 'required|numeric',
+                'longitude' => 'required|numeric',
+                'type' => 'required|in:check_in,check_out'
             ]);
-        }
 
-        // Hitung jarak dengan lokasi
-        $distance = $this->calculateDistance(
-            $request->latitude,
-            $request->longitude,
-            $location->latitude,
-            $location->longitude
-        );
+            $user_id = Auth::id();
+            $today = now()->toDateString();
+            $currentTime = now();
 
-        $maxRadius = $location->radius ?? 100;
-
-        if ($distance > $maxRadius) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Anda berada diluar radius sekolah (' . $distance . ' meter)'
-            ]);
-        }
-
-        // Cek absensi hari ini
-        $attendance = Attendance::where('user_id', $user_id)
-            ->whereDate('created_at', $today)
-            ->first();
-
-        // Jam kerja
-        $startTime = Carbon::parse('07:00');
-        $endTime = Carbon::parse('16:00');
-
-        // Absen masuk
-        if ($request->type == 'check_in') {
-            if ($attendance && $attendance->check_in_time) {
+            // Dapatkan lokasi aktif
+            $location = Location::first();
+            if (!$location) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Anda sudah absen masuk hari ini'
-                ]);
+                    'message' => 'Tidak ada lokasi instansi yang aktif'
+                ], 400);
             }
 
-            // Cek keterlambatan
-            $isLate = $currentTime->greaterThan($startTime);
-            $lateMinutes = $isLate ? $currentTime->diffInMinutes($startTime) : 0;
+            // Cek absensi hari ini
+            $attendance = Attendance::where('user_id', $user_id)
+                ->whereDate('created_at', $today)
+                ->first();
 
-            // Simpan absen
-            if (!$attendance) {
-                $attendance = new Attendance();
-                $attendance->user_id = $user_id;
-                $attendance->location_id = $location->id;
-            }
+            // Jam kerja
+            $startTime = Carbon::parse('07:00');
+            $endTime = Carbon::parse('16:00');
 
-            $attendance->check_in_time = $currentTime;
-            $attendance->check_in_lat = $request->latitude;
-            $attendance->check_in_long = $request->longitude;
-            $attendance->is_late = $isLate;
-            $attendance->late_minutes = $lateMinutes;
-            $attendance->save();
+            // Absen masuk
+            if ($request->type == 'check_in') {
+                if ($attendance && $attendance->check_in_time) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Anda sudah absen masuk hari ini'
+                    ], 400);
+                }
 
-            // response
-            if ($isLate) {
+                // Cek keterlambatan
+                $isLate = $currentTime->greaterThan($startTime);
+                $lateMinutes = $isLate ? $currentTime->diffInMinutes($startTime) : 0;
+
+                // Simpan absen
+                if (!$attendance) {
+                    $attendance = new Attendance();
+                    $attendance->user_id = $user_id;
+                    $attendance->location_id = $location->id;
+                }
+
+                $attendance->check_in_time = $currentTime;
+                $attendance->check_in_lat = $request->latitude;
+                $attendance->check_in_long = $request->longitude;
+                $attendance->is_late = $isLate;
+                $attendance->late_minutes = $lateMinutes;
+                $attendance->save();
+
+                // Response
+                if ($isLate) {
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => 'Absen Masuk Berhasil',
+                        'warning' => 'Anda terlambat ' . $lateMinutes . ' menit'
+                    ]);
+                }
+
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'Absen Masuk Berhasil',
-                    'warning' => 'Anda terlambat ' . $lateMinutes . ' menit'
+                    'message' => 'Absen Masuk Berhasil'
                 ]);
             }
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Absen Masuk Berhasil'
-            ]);
-        }
+            // Absen pulang
+            else {
+                if (!$attendance) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Anda belum masuk hari ini'
+                    ], 400);
+                }
 
-        // Absen pulang
-        else {
-            if (!$attendance) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Anda belum masuk hari ini'
-                ]);
-            }
+                if ($attendance->check_out_time) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Anda sudah absen pulang hari ini'
+                    ], 400);
+                }
 
-            if ($attendance->check_out_time) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Anda sudah absen pulang hari ini'
-                ]);
-            }
+                // Cek pulang cepat
+                $isEarly = $currentTime->lessThan($endTime);
+                $earlyMinutes = $isEarly ? $currentTime->diffInMinutes($endTime) : 0;
 
-            // Cek pulang cepat
-            $isEarly = $currentTime->lessThan($endTime);
-            $earlyMinutes = $isEarly ? $currentTime->diffInMinutes($endTime) : 0;
+                // Simpan absen pulang
+                $attendance->check_out_time = $currentTime;
+                $attendance->check_out_lat = $request->latitude;
+                $attendance->check_out_long = $request->longitude;
+                $attendance->is_early = $isEarly;
+                $attendance->early_minutes = $earlyMinutes;
+                $attendance->save();
 
-            // Simpan absen pulang
-            $attendance->check_out_time = $currentTime;
-            $attendance->check_out_lat = $request->latitude;
-            $attendance->check_out_long = $request->longitude;
-            $attendance->is_early = $isEarly;
-            $attendance->early_minutes = $earlyMinutes;
-            $attendance->save();
+                // Response
+                if ($isEarly) {
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => 'Absen Pulang Berhasil',
+                        'warning' => 'Anda pulang lebih awal ' . $earlyMinutes . ' menit'
+                    ]);
+                }
 
-            // Response
-            if ($isEarly) {
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'Absen Pulang Berhasil',
-                    'warning' => 'Anda pulang lebih awal ' . $earlyMinutes . ' menit'
+                    'message' => 'Absen Pulang Berhasil'
                 ]);
             }
-
+        } catch (\Exception $e) {
+            Log::error('Error in store function: ' . $e->getMessage());
             return response()->json([
-                'status' => 'success',
-                'message' => 'Absen Pulang Berhasil'
-            ]);
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan server: ' . $e->getMessage()
+            ], 500);
         }
-    }
-
-    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
-    {
-        $earthRadius = 6371000; // radius bumi dalam meter
-
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lon2 - $lon1);
-
-        $a = sin($dLat / 2) * sin($dLat / 2) +
-            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-            sin($dLon / 2) * sin($dLon / 2);
-
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-        $distance = $earthRadius * $c;
-
-        return round($distance);
     }
 
     public function cameraAbsensi(Request $request)

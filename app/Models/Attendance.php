@@ -8,6 +8,21 @@ class Attendance extends Model
 {
     protected $guarded = ['id'];
 
+    protected $fillable = [
+        'user_id',
+        'location_id',
+        'check_in_time',
+        'check_in_lat',
+        'check_in_long',
+        'check_out_time',
+        'check_out_lat',
+        'check_out_long',
+        'is_late',
+        'late_minutes',
+        'is_early',
+        'early_minutes',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

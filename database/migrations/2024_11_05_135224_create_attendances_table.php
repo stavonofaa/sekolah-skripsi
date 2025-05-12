@@ -21,6 +21,10 @@ return new class extends Migration
             $table->decimal('check_in_long', 11, 8)->nullable();
             $table->decimal('check_out_lat', 10, 8)->nullable();
             $table->decimal('check_out_long', 11, 8)->nullable();
+            $table->boolean('is_late')->default(false);
+            $table->integer('late_minutes')->default(0);
+            $table->boolean('is_early')->default(false);
+            $table->integer('early_minutes')->default(0);
             $table->timestamps();
         });
     }
