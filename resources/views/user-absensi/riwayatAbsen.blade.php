@@ -55,10 +55,16 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>
                                 @if ($item->photo_path)
-                                    <img class="w-100" src="{{ asset('storage/attendance_photos/' . $item->photo_path) }}"
-                                        alt="Foto Absen">
+                                    @php
+                                        $photoName = $item->photo_path;
+                                        if (strpos($photoName, 'attendance_photos/') === 0) {
+                                            $photoName = substr($photoName, strlen('attendance_photos/'));
+                                        }
+                                    @endphp
+                                    <img class="img-fluid" style="max-width: 200px;"
+                                        src="{{ url('storage/attendance_photos/' . $photoName) }}" alt="Foto Absen">
                                 @else
-                                    Tidak ada foto
+                                    <span class="text-yellow-500">Tidak ada foto</span>
                                 @endif
                             </td>
                             <td>{{ $item->latitude }}</td>
