@@ -72,7 +72,7 @@ class UserController extends Controller
                 ->whereDate('created_at', $today)
                 ->first();
 
-            // Jam kerja
+            // Jam sekolah
             $startTime = Carbon::parse('07:00');
             $endTime = Carbon::parse('16:00');
 
