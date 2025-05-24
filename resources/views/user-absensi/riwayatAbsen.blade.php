@@ -61,8 +61,7 @@
                                             $photoName = substr($photoName, strlen('attendance_photos/'));
                                         }
                                     @endphp
-                                    <img class="img-fluid" style="max-width: 200px;"
-                                        src="{{ url('storage/attendance_photos/' . $photoName) }}" alt="Foto Absen">
+                                    <img src="{{ asset('storage/' . $item->photo_path) }}" alt="Foto Absen">
                                 @else
                                     <span class="text-yellow-500">Tidak ada foto</span>
                                 @endif
