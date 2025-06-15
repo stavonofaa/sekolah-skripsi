@@ -14,6 +14,7 @@ class CameraAttedance extends Model
     protected $fillable = [
         'user_id',
         'check_in',
+        'check_out',
         'photo_path',
         'latitude',
         'longitude',

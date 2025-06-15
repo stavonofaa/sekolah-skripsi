@@ -29,7 +29,8 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $item->created_at->format('j F Y') }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->check_in_time)->format('H:i') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($item->check_out_time)->format('H:i') }}</td>
+                            <td> {{ $item->check_out_time ? \Carbon\Carbon::parse($item->check_out_time)->format('H:i') : '-' }}
+                            </td>
                             <td>{{ $item->distance }}</td>
                         </tr>
                     @endforeach
@@ -45,6 +46,8 @@
                     <tr>
                         <th>No</th>
                         <th>Foto</th>
+                        <th>Jam Masuk</th>
+                        <th>Jam Keluar</th>
                         <th>Latitude</th>
                         <th>Longitude</th>
                     </tr>
@@ -66,6 +69,8 @@
                                     <span class="text-yellow-500">Tidak ada foto</span>
                                 @endif
                             </td>
+                            <td>{{ $item->check_in ?? '-' }}</td>
+                            <td>{{ $item->check_out ?? '-' }}</td>
                             <td>{{ $item->latitude }}</td>
                             <td>{{ $item->longitude }}</td>
                         </tr>

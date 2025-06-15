@@ -26,7 +26,7 @@ class UserController extends Controller
             ->latest()
             ->get();
 
-        $cameraAttendances = CameraAttedance::select('id', 'photo_path', 'latitude', 'longitude', 'created_at')
+        $cameraAttendances = CameraAttedance::select('id', 'photo_path', 'latitude', 'check_in', 'check_out', 'longitude', 'created_at')
             ->where('user_id', Auth::id())
             ->latest()
             ->get();
@@ -271,6 +271,7 @@ class UserController extends Controller
         CameraAttedance::create([
             'user_id' => Auth::id(),
             'check_in' => now(),
+            'check_out' => now(),
             'photo_path' => $photoPath,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude

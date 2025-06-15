@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 12 Bulan Mei 2025 pada 07.08
+-- Waktu pembuatan: 15 Jun 2025 pada 10.03
 -- Versi server: 10.4.28-MariaDB
 -- Versi PHP: 8.0.28
 
@@ -41,6 +41,7 @@ CREATE TABLE `attendances` (
   `late_minutes` int(11) NOT NULL DEFAULT 0,
   `is_early` tinyint(1) NOT NULL DEFAULT 0,
   `early_minutes` int(11) NOT NULL DEFAULT 0,
+  `phone_number` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -79,6 +80,7 @@ CREATE TABLE `camera_attendances` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `check_in` datetime NOT NULL,
+  `check_out` datetime NOT NULL,
   `photo_path` varchar(255) NOT NULL,
   `latitude` decimal(10,8) DEFAULT NULL,
   `longitude` decimal(11,8) DEFAULT NULL,
@@ -155,6 +157,13 @@ CREATE TABLE `locations` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data untuk tabel `locations`
+--
+
+INSERT INTO `locations` (`id`, `name_location`, `address`, `latitude`, `longitude`, `radius`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'SMA Negeri 1 Cikarang Timur', 'Jl. Raya Citarik No.2, RT.11/RW.6, Jatibaru, Kec. Cikarang Tim., Kabupaten Bekasi, Jawa Barat 17530', -6.27435619, 107.20150362, 10, 1, '2025-06-15 08:02:48', '2025-06-15 08:02:48');
+
 -- --------------------------------------------------------
 
 --
@@ -172,12 +181,12 @@ CREATE TABLE `migrations` (
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(42, '0001_01_01_000000_create_users_table', 1),
-(43, '0001_01_01_000001_create_cache_table', 1),
-(44, '0001_01_01_000002_create_jobs_table', 1),
-(45, '2024_11_05_135202_create_locations_table', 1),
-(46, '2024_11_05_135224_create_attendances_table', 1),
-(47, '2025_05_11_150722_create_camera_attendances_table', 1);
+(70, '0001_01_01_000000_create_users_table', 1),
+(71, '0001_01_01_000001_create_cache_table', 1),
+(72, '0001_01_01_000002_create_jobs_table', 1),
+(73, '2024_11_05_135202_create_locations_table', 1),
+(74, '2024_11_05_135224_create_attendances_table', 1),
+(75, '2025_05_11_150722_create_camera_attendances_table', 1);
 
 -- --------------------------------------------------------
 
@@ -343,13 +352,13 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT untuk tabel `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`
