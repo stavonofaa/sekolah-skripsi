@@ -21,6 +21,14 @@ class Attendance extends Model
         'late_minutes',
         'is_early',
         'early_minutes',
+        'phone_number',
+    ];
+
+    protected $casts = [
+        'check_in_time' => 'datetime',
+        'check_out_time' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function user()

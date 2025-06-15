@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('late_minutes')->default(0);
             $table->boolean('is_early')->default(false);
             $table->integer('early_minutes')->default(0);
+            $table->string('phone_number')->nullable();
             $table->timestamps();
         });
     }

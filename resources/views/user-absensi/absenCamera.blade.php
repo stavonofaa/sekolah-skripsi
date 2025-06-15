@@ -94,6 +94,12 @@
         const lng = document.getElementById('longitude').value;
         if (!lat || !lng) {
             e.preventDefault();
+            Swal.fire({
+                title: 'Informasi',
+                text: 'Data lokasi belum tersedia',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
             alert('Data lokasi belum tersedia');
             getLocation();
         }

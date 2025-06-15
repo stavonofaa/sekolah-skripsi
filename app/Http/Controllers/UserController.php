@@ -48,36 +48,93 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
-                'latitude' => 'required|numeric',
-                'longitude' => 'required|numeric',
-                'type' => 'required|in:check_in,check_out'
-            ]);
+            $type = $request->input('type');
 
-            $user_id = Auth::id();
-            $today = now()->toDateString();
-            $currentTime = now();
-
-            // Dapatkan lokasi aktif
-            $location = Location::first();
-            if (!$location) {
+            if (!in_array($type, ['check_in', 'check_out'])) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Tidak ada lokasi instansi yang aktif'
+                    'message' => 'Tipe absen tidak valid'
                 ], 400);
             }
 
-            // Cek absensi hari ini
-            $attendance = Attendance::where('user_id', $user_id)
-                ->whereDate('created_at', $today)
-                ->first();
+            $rules = [
+                'latitude' => 'required|numeric',
+                'longitude' => 'required|numeric',
+                'type' => 'required|in:check_in,check_out',
+            ];
 
-            // Jam sekolah
-            $startTime = Carbon::parse('07:00');
-            $endTime = Carbon::parse('16:00');
+            if ($type === 'check_out') {
+                $rules['phone_number'] = 'required|string';
+            }
 
-            // Absen masuk
-            if ($request->type == 'check_in') {
+            try {
+                $request->validate($rules);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                $errors = collect($e->errors())->flatten()->toArray();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data tidak valid: ' . implode(', ', $errors)
+                ], 422);
+            }
+
+            if ($type === 'check_out') {
+                $phoneNumber = trim($request->phone_number);
+
+                if (
+                    !str_starts_with($phoneNumber, '08') &&
+                    !str_starts_with($phoneNumber, '628') &&
+                    !str_starts_with($phoneNumber, '+628')
+                ) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Nomor handphone harus dimulai dengan 08, 628, atau +628'
+                    ], 400);
+                }
+
+                $cleanPhone = str_replace('+', '', $phoneNumber);
+                if (strlen($cleanPhone) < 10 || strlen($cleanPhone) > 13) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Panjang nomor handphone tidak valid'
+                    ], 400);
+                }
+            }
+
+            $user_id = Auth::id();
+            if (!$user_id) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User tidak terautentikasi'
+                ], 401);
+            }
+
+            $now = now();
+            $today = $now->toDateString();
+
+            try {
+                $location = Location::first();
+                if (!$location) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Tidak ada lokasi instansi yang aktif'
+                    ], 400);
+                }
+
+                $attendance = Attendance::where('user_id', $user_id)
+                    ->whereDate('created_at', $today)
+                    ->first();
+            } catch (\Exception $e) {
+                Log::error('Database query error: ' . $e->getMessage());
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Kesalahan mengakses database'
+                ], 500);
+            }
+
+            $startTime = Carbon::parse('07:00')->setDateFrom($now);
+            $endTime   = Carbon::parse('16:00')->setDateFrom($now);
+
+            if ($type === 'check_in') {
                 if ($attendance && $attendance->check_in_time) {
                     return response()->json([
                         'status' => 'error',
@@ -85,45 +142,46 @@ class UserController extends Controller
                     ], 400);
                 }
 
-                // Cek keterlambatan
-                $isLate = $currentTime->greaterThan($startTime);
-                $lateMinutes = $isLate ? $currentTime->diffInMinutes($startTime) : 0;
+                $isLate = $now->greaterThan($startTime);
+                $lateMinutes = $isLate ? $now->diffInMinutes($startTime) : 0;
 
-                // Simpan absen
-                if (!$attendance) {
-                    $attendance = new Attendance();
-                    $attendance->user_id = $user_id;
-                    $attendance->location_id = $location->id;
-                }
+                try {
+                    if (!$attendance) {
+                        $attendance = new Attendance([
+                            'user_id' => $user_id,
+                            'location_id' => $location->id,
+                            'created_at' => $now,
+                            'updated_at' => $now,
+                        ]);
+                    }
 
-                $attendance->check_in_time = $currentTime;
-                $attendance->check_in_lat = $request->latitude;
-                $attendance->check_in_long = $request->longitude;
-                $attendance->is_late = $isLate;
-                $attendance->late_minutes = $lateMinutes;
-                $attendance->save();
+                    $attendance->fill([
+                        'check_in_time' => $now,
+                        'check_in_lat' => $request->latitude,
+                        'check_in_long' => $request->longitude,
+                        'is_late' => $isLate,
+                        'late_minutes' => $lateMinutes,
+                        'updated_at' => $now,
+                    ])->save();
 
-                // Response
-                if ($isLate) {
                     return response()->json([
                         'status' => 'success',
-                        'message' => 'Absen Masuk Berhasil',
-                        'warning' => 'Anda terlambat ' . $lateMinutes . ' menit'
+                        'message' => 'Absen Masuk Berhasil' . ($isLate ? ', Anda terlambat ' . $lateMinutes . ' menit' : '')
                     ]);
-                }
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Absen Masuk Berhasil'
-                ]);
-            }
-
-            // Absen pulang
-            else {
-                if (!$attendance) {
+                } catch (\Exception $e) {
+                    Log::error('Error saving check-in: ' . $e->getMessage());
                     return response()->json([
                         'status' => 'error',
-                        'message' => 'Anda belum masuk hari ini'
+                        'message' => 'Gagal menyimpan data absen masuk'
+                    ], 500);
+                }
+            }
+
+            if ($type === 'check_out') {
+                if (!$attendance || !$attendance->check_in_time) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Anda belum absen masuk hari ini'
                     ], 400);
                 }
 
@@ -134,37 +192,67 @@ class UserController extends Controller
                     ], 400);
                 }
 
-                // Cek pulang cepat
-                $isEarly = $currentTime->lessThan($endTime);
-                $earlyMinutes = $isEarly ? $currentTime->diffInMinutes($endTime) : 0;
+                $isEarly = $now->lessThan($endTime);
+                $earlyMinutes = $isEarly ? $endTime->diffInMinutes($now) : 0;
 
-                // Simpan absen pulang
-                $attendance->check_out_time = $currentTime;
-                $attendance->check_out_lat = $request->latitude;
-                $attendance->check_out_long = $request->longitude;
-                $attendance->is_early = $isEarly;
-                $attendance->early_minutes = $earlyMinutes;
-                $attendance->save();
+                try {
+                    $attendance->fill([
+                        'check_out_time' => $now,
+                        'check_out_lat' => $request->latitude,
+                        'check_out_long' => $request->longitude,
+                        'is_early' => $isEarly,
+                        'early_minutes' => $earlyMinutes,
+                        'phone_number' => $request->phone_number,
+                        'updated_at' => $now,
+                    ])->save();
 
-                // Response
-                if ($isEarly) {
-                    return response()->json([
+                    $attendance->refresh();
+
+                    $user = Auth::user();
+                    if (!$user) {
+                        throw new \Exception('User data not found');
+                    }
+
+                    $info = [
+                        'username' => $user->name,
+                        'check_in_time' => $attendance->check_in_time
+                            ? $attendance->check_in_time->format('H:i')
+                            : 'Belum Absen Masuk',
+                        'check_out_time' => $now->format('H:i'),
+                        'phone_number' => $request->phone_number,
+                    ];
+
+                    $response = [
                         'status' => 'success',
                         'message' => 'Absen Pulang Berhasil',
-                        'warning' => 'Anda pulang lebih awal ' . $earlyMinutes . ' menit'
-                    ]);
-                }
+                        'attendance_info' => $info,
+                    ];
 
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Absen Pulang Berhasil'
-                ]);
+                    if ($isEarly) {
+                        $response['warning'] = 'Anda pulang lebih awal ' . $earlyMinutes . ' menit';
+                    }
+
+                    return response()->json($response);
+                } catch (\Exception $e) {
+                    Log::error('Error saving check-out: ' . $e->getMessage());
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Gagal menyimpan data absen pulang'
+                    ], 500);
+                }
             }
-        } catch (\Exception $e) {
-            Log::error('Error in store function: ' . $e->getMessage());
+
+            // Default fallback
             return response()->json([
                 'status' => 'error',
-                'message' => 'Terjadi kesalahan server: ' . $e->getMessage()
+                'message' => 'Tipe absen tidak dikenali'
+            ], 400);
+        } catch (\Exception $e) {
+            Log::error('General error in store method: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan server'
             ], 500);
         }
     }
