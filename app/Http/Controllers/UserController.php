@@ -26,7 +26,7 @@ class UserController extends Controller
             ->latest()
             ->get();
 
-        $cameraAttendances = CameraAttedance::select('id', 'photo_path', 'latitude', 'check_in', 'check_out', 'longitude', 'created_at')
+        $cameraAttendances = CameraAttedance::select('id', 'photo_in', 'photo_out', 'latitude', 'check_in', 'check_out', 'longitude', 'latitude_out', 'longitude_out', 'created_at')
             ->where('user_id', Auth::id())
             ->latest()
             ->get();
@@ -259,24 +259,54 @@ class UserController extends Controller
 
     public function cameraAbsensi(Request $request)
     {
+        // Validasi input
         $request->validate([
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'longitude' => 'required|numeric'
         ]);
 
         $photo = $request->file('photo');
         $photoPath = $photo->store('attendance_photos', 'public');
 
+        $userId = Auth::id();
+        // validasi apakah user sudah login
+        if (!$userId) {
+            return redirect()->back()->with('error', 'User tidak terautentikasi');
+        }
+        $today = now()->format('Y-m-d');
+
+        // cek apakah user sudah absen hari ini
+        $existingAttendance = CameraAttedance::where('user_id', $userId)
+            ->whereDate('check_in', $today)
+            ->first();
+
+        // Pengecekan ketika sudah absen hari ini masuk dan keluar
+        if ($existingAttendance) {
+            if ($existingAttendance->check_out === null) {
+                // Absen keluar
+                $existingAttendance->update([
+                    'check_out' => now(),
+                    'latitude_out' => $request->latitude,
+                    'longitude_out' => $request->longitude,
+                    'photo_out' => $photoPath,
+                ]);
+
+                return redirect()->back()->with('success', 'Absensi keluar berhasil direkam');
+            } else {
+                // Sudah absen masuk & keluar
+                return redirect()->back()->with('warning', 'Anda sudah absen masuk dan pulang hari ini');
+            }
+        }
+        // Absen masuk
         CameraAttedance::create([
-            'user_id' => Auth::id(),
+            'user_id' => $userId,
+            'photo_in' => $photoPath,
             'check_in' => now(),
-            'check_out' => now(),
-            'photo_path' => $photoPath,
             'latitude' => $request->latitude,
-            'longitude' => $request->longitude
+            'longitude' => $request->longitude,
         ]);
 
-        return redirect()->back()->with('success', 'Absensi berhasil direkam');
+        return redirect()->back()->with('success', 'Absensi masuk berhasil direkam');
     }
 }

@@ -13,6 +13,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
@@ -105,3 +106,37 @@
         }
     });
 </script>
+
+{{-- notifikasi dari backend  --}}
+@if (session('success'))
+    <script>
+        Swal.fire({
+            title: 'Berhasil',
+            text: '{{ session('success') }}',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    </script>
+@endif
+
+@if (session('warning'))
+    <script>
+        Swal.fire({
+            title: 'Peringatan',
+            text: '{{ session('warning') }}',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+    </script>
+@endif
+
+@if (session('error'))
+    <script>
+        Swal.fire({
+            title: 'Gagal',
+            text: '{{ session('error') }}',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    </script>
+@endif

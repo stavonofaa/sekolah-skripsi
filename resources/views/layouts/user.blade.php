@@ -8,6 +8,7 @@
     <title>Absen App</title>
     {{-- logo company --}}
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('bahan/logo.png') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{{ asset('bootstrap/bootstrap.min.css') }}">
 </head>
 

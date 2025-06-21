@@ -15,9 +15,12 @@ class CameraAttedance extends Model
         'user_id',
         'check_in',
         'check_out',
-        'photo_path',
+        'photo_in',
+        'photo_out',
         'latitude',
         'longitude',
+        'latitude_out',
+        'longitude_out',
     ];
 
     public function user()
