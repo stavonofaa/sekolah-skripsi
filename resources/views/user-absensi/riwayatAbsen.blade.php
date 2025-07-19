@@ -61,14 +61,9 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>
-                                @if ($item->photo_in)
-                                    @php
-                                        $photoName = $item->photo_in;
-                                        if (strpos($photoName, 'attendance_photos/') === 0) {
-                                            $photoName = substr($photoName, strlen('attendance_photos/'));
-                                        }
-                                    @endphp
-                                    <img src="{{ asset('storage/' . $item->photo_in) }}" alt="Foto Absen">
+                                @if (!empty($item->photo_in))
+                                    <img src="{{ asset('storage/' . ltrim($item->photo_in, '/')) }}" alt="Foto Absen"
+                                        style="max-width: 120px;">
                                 @else
                                     <span class="text-yellow-500">Tidak ada foto</span>
                                 @endif
